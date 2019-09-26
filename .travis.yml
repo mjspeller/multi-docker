@@ -8,7 +8,7 @@ before_install:
 script:
   - docker run -e CI=true mjcloudtester/react-test npm test
 
-after_sucess:
+after_success:
   - docker build -t mjcloudtester/multi-client ./client
   - docker build -t mjcloudtester/multi-nginx ./nginx
   - docker build -t mjcloudtester/multi-server ./server
