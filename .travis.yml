@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mjcloudtester/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true mjcloudtester/react-test npm test
+
+after_sucess:
+  - docker build -t mjcloudtester/multi-client ./client
+  - docker build -t mjcloudtester/multi-nginx ./nginx
+  - docker build -t mjcloudtester/multi-server ./server
+  - docker build -t mjcloudtester/multi-worker ./worker
+  # log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "DOCKER_ID" --password-stdin
+  # Push images to docker hub
+  - docker push mjcloudtester/multi-client
+  - docker push mjcloudtester/multi-nginx
+  - docker push mjcloudtester/multi-server
+  - docker push mjcloudtester/multi-worker
